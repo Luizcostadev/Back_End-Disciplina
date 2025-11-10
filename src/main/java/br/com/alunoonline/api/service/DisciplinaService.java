@@ -1,7 +1,6 @@
 package br.com.alunoonline.api.service;
 
 import br.com.alunoonline.api.model.Disciplina;
-
 import br.com.alunoonline.api.repository.DisciplinaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,42 +8,45 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DisciplinaService {
+
     @Autowired
     private DisciplinaRepository disciplinaRepository;
 
-    public void criarDisciplina(Disciplina disciplina) {
-        disciplinaRepository.save(disciplina);
-
+    public Disciplina criarDisciplina(Disciplina disciplina) {
+        return disciplinaRepository.save(disciplina);
     }
 
-    public List<Disciplina> buscarTodasDisciplinas(){
+    public List<Disciplina> buscarTodasDisciplinas() {
         return disciplinaRepository.findAll();
     }
 
-    public Optional<Disciplina> buscarDisciplinaPorId(Long id){
-        return disciplinaRepository.findById(id);
+    public Disciplina buscarDisciplinaPorId(Long id) {
+        return disciplinaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Disciplina não encontrada com ID: " + id
+                ));
     }
 
-    public void deletarDisciplinaPorId(Long id){
+    public void deletarDisciplinaPorId(Long id) {
+        if (!disciplinaRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Disciplina não encontrada com ID: " + id
+            );
+        }
         disciplinaRepository.deleteById(id);
     }
 
-    public void atualizarDisciplinaPorId(Long id, Disciplina atualizarDisciplina) {
-        Optional<Disciplina> DisciplinaBancoDeDados = buscarDisciplinaPorId(id);
+    public Disciplina atualizarDisciplina(Long id, Disciplina disciplinaAtualizada) {
+        Disciplina disciplinaExistente = buscarDisciplinaPorId(id);
 
-        if (DisciplinaBancoDeDados.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Disciplina não encontrada");
-        } else {
-            Disciplina disciplinaParaEditar = DisciplinaBancoDeDados.get();
+        disciplinaExistente.setNome(disciplinaAtualizada.getNome());
 
 
-            disciplinaParaEditar.setNomeDisciplina(atualizarDisciplina.getNomeDisciplina());
-
-            disciplinaRepository.save(disciplinaParaEditar);
-        }
+        return disciplinaRepository.save(disciplinaExistente);
     }
 }
