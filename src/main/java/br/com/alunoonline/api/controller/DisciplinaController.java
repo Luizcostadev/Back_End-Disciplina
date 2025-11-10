@@ -11,7 +11,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/disciplinas")
+@RequestMapping("/disciplina")
 public class DisciplinaController {
 
     @Autowired
@@ -35,7 +35,7 @@ public class DisciplinaController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Disciplina> buscarDisciplinaPorId(@PathVariable Long id) {
-        return disciplinaService.buscarDisciplinaPorId(id);
+        return Optional.ofNullable(disciplinaService.buscarDisciplinaPorId(id));
     }
 
 
@@ -49,6 +49,6 @@ public class DisciplinaController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void atualizarDisciplinaPorId(@PathVariable Long id, @RequestBody Disciplina atualizarDisciplina) {
-        disciplinaService.atualizarDisciplinaPorId(id, atualizarDisciplina);
+        disciplinaService.atualizarDisciplina(id, atualizarDisciplina);
     }
 }
