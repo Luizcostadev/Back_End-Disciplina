@@ -14,7 +14,7 @@ public class Disciplina {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nome;
+    private String Nome;
 
         @ManyToOne
     private professor professor;
